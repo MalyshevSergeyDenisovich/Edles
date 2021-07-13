@@ -1,6 +1,6 @@
 namespace Bin.Units.UnitConstructor
 {
-    public class BaseUnit
+    public abstract class BaseUnit
     {
         
     }
