@@ -1,7 +1,7 @@
 ﻿namespace Bin.Units.Items
 {
-    public abstract class BaseItem
+    public abstract class Item
     {
-        
+        public float Weight { get; }
     }
 }
