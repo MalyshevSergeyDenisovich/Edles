@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Bin.Units.Items;
 using Bin.Units.Skills;
 using Bin.Units.Staff;
+using UnityEngine;
 
 namespace Bin.Units.UnitConstructor
 {
@@ -21,6 +22,10 @@ namespace Bin.Units.UnitConstructor
             _skills = new List<Skill>();
         }
 
+        public void Move(Vector3 target)
+        {
+            
+        }
 
         public void Take(Item item)
         {
