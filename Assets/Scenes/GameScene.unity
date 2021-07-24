@@ -286,7 +286,7 @@ GameObject:
   - component: {fileID: 1189514719}
   m_Layer: 0
   m_Name: Terrain
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -361,6 +361,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit
       objectReference: {fileID: 0}
+    - target: {fileID: 809012746831165055, guid: 9cabb58f953375647b87b915843e767b, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2399569082833817103, guid: 9cabb58f953375647b87b915843e767b, type: 3}
+      propertyPath: idle
+      value: 
+      objectReference: {fileID: 9100000, guid: a8555c0cff30527479e32562cef9141f, type: 2}
+    - target: {fileID: 2399569082833817103, guid: 9cabb58f953375647b87b915843e767b, type: 3}
+      propertyPath: walk
+      value: 
+      objectReference: {fileID: 9100000, guid: 75d3a58b3d7879f41926561701407a48, type: 2}
     - target: {fileID: 4434108873262234461, guid: 9cabb58f953375647b87b915843e767b, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -405,9 +417,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4725218607265491536, guid: 9cabb58f953375647b87b915843e767b, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4725218607265491536, guid: 9cabb58f953375647b87b915843e767b, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 5365951141528795234, guid: 9cabb58f953375647b87b915843e767b, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5434999118921212200, guid: 9cabb58f953375647b87b915843e767b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2399569082833817103, guid: 9cabb58f953375647b87b915843e767b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9cabb58f953375647b87b915843e767b, type: 3}
