@@ -626,7 +626,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872234483266996291, guid: 76626fd4ef8a9c246acd906ab6538d6e, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 872234483266996291, guid: 76626fd4ef8a9c246acd906ab6538d6e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1705,6 +1705,49 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 2399569082833817103, guid: 9cabb58f953375647b87b915843e767b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9cabb58f953375647b87b915843e767b, type: 3}
+--- !u!1 &1069462106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1069462108}
+  - component: {fileID: 1069462107}
+  m_Layer: 0
+  m_Name: TestingGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1069462107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069462106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee418155a1b743e28be37133f2610dcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1069462108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069462106}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 30
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1093759820 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 4326155517866209876, guid: 9cabb58f953375647b87b915843e767b, type: 3}
@@ -2864,7 +2907,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 75d3a58b3d7879f41926561701407a48, type: 2}
     - target: {fileID: 4434108873262234461, guid: 9cabb58f953375647b87b915843e767b, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4434108873262234461, guid: 9cabb58f953375647b87b915843e767b, type: 3}
       propertyPath: m_LocalPosition.x

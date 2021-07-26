@@ -2,7 +2,7 @@
 using System.Linq;
 using Bin.Global.ActionStates;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 
 
 namespace Bin.Global
