@@ -11,7 +11,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 88ba486d780efc948a81f5bd24144a08, type: 3}
   m_Controller: {fileID: 9100000, guid: a8555c0cff30527479e32562cef9141f, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -65,7 +65,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5ae386dd5d440e8bc84f8c845d72ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectionCircle: {fileID: 5434999118921212200}
+  _animator: {fileID: 0}
+  targetPos: {x: 0, y: 0, z: 0}
 --- !u!1 &4725218607265491536
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,11 +240,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2daecc85207d4b740b26577e824e6235, type: 3}
---- !u!1 &5434999118921212200 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5061649490242459747, guid: 2daecc85207d4b740b26577e824e6235, type: 3}
-  m_PrefabInstance: {fileID: 959945685680814411}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3457517995569652128 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2497804337059682539, guid: 2daecc85207d4b740b26577e824e6235, type: 3}

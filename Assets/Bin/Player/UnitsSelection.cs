@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Bin.Global;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ namespace Bin.Player
         private Ray _ray;
         private RaycastHit _raycastHit;
         private Camera _camera;
-
+        
         private void Awake()
         {
             _camera = Camera.main;
@@ -28,11 +27,15 @@ namespace Bin.Player
             }
 
             if (Input.GetMouseButtonUp(0))
+            {
                 _isDraggingMouseBox = false;
-            
+            }
+
             if (_isDraggingMouseBox && _dragStartPosition != Input.mousePosition)
+            {
                 _SelectUnitsInDraggingBox();
-            
+            }
+
             if (Globals.SelectedUnits.Count > 0)
             {
                 if (Input.GetKeyDown(KeyCode.Escape))
@@ -62,13 +65,17 @@ namespace Bin.Player
         
         private void OnGUI()
         {
-            if (_isDraggingMouseBox)
-            {
-                // Create a rect from both mouse positions
-                var rect = Utils.GetScreenRect(_dragStartPosition, Input.mousePosition);
-                Utils.DrawScreenRect(rect, new Color(0.5f, 1f, 0.4f, 0.2f));
-                Utils.DrawScreenRectBorder(rect, 1, new Color(0.5f, 1f, 0.4f));
-            }
+            DrawScreenRect();
+        }
+
+        
+        
+        private void DrawScreenRect()
+        {
+            if (!_isDraggingMouseBox) return;
+            var rect = Utils.GetScreenRect(_dragStartPosition, Input.mousePosition);
+            Utils.DrawScreenRect(rect, Globals.ScreenRectColor);
+            Utils.DrawScreenRectBorder(rect, 1, Globals.ScreenRectBorderColor);
         }
 
         private void _SelectUnitsInDraggingBox()
@@ -78,8 +85,7 @@ namespace Bin.Player
                 _dragStartPosition,
                 Input.mousePosition
             );
-            var selectableUnits = GameObject.FindGameObjectsWithTag(Globals.UnitTag);
-            foreach (var unit in selectableUnits)
+            foreach (var unit in Globals.SelectableUnits)
             {
                 var inBounds = selectionBounds.Contains(
                     _camera.WorldToViewportPoint(unit.transform.position)
