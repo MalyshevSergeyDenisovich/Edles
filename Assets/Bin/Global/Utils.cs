@@ -10,7 +10,6 @@ namespace Bin.Global
         {
             get
             {
-                if (_whiteTexture != null) return _whiteTexture;
                 _whiteTexture = new Texture2D(1, 1);
                 _whiteTexture.SetPixel(0, 0, Color.white);
                 _whiteTexture.Apply();
