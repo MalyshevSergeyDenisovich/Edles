@@ -4,7 +4,7 @@ namespace Bin.Global
 {
     public static class Utils
     {
-        static Texture2D _whiteTexture;
+        private static Texture2D _whiteTexture;
 
         private static Texture2D WhiteTexture
         {
@@ -29,13 +29,13 @@ namespace Bin.Global
         public static void DrawScreenRectBorder(Rect rect, float thickness, Color color)
         {
             // Top
-            Utils.DrawScreenRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
+            DrawScreenRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
             // Left
-            Utils.DrawScreenRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
+            DrawScreenRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
             // Right
-            Utils.DrawScreenRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
+            DrawScreenRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
             // Bottom
-            Utils.DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
+            DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
         }
 
         public static Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2)
