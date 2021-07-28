@@ -5,10 +5,10 @@ namespace Bin.WorldGeneration
 {
     public class EndlessTerrain : MonoBehaviour
     {
-        private const float scale = 5f;
+        private const float Scale = 5f;
         
         private const float ViewerMoveThresholdForChunkUpdate = 25f;
-        private const float sqrViewerMoveThresholdForChunkUpdate = ViewerMoveThresholdForChunkUpdate * ViewerMoveThresholdForChunkUpdate; 
+        private const float SqrViewerMoveThresholdForChunkUpdate = ViewerMoveThresholdForChunkUpdate * ViewerMoveThresholdForChunkUpdate; 
         
         public LODInfo[] detailLevels;
         public static float maxViewDist;
@@ -21,27 +21,27 @@ namespace Bin.WorldGeneration
         private Vector2 veiwerPositionOld;
         private static MapGenerator mapGenerator;
         
-        private int chunkSize;
-        private int chunksVisibleInViewDistance;
+        private int _chunkSize;
+        private int _chunksVisibleInViewDistance;
 
-        private Dictionary<Vector2, TerrainChunk> terrainChunksDictionary = new Dictionary<Vector2, TerrainChunk>();
-        private static List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
+        private readonly Dictionary<Vector2, TerrainChunk> _terrainChunksDictionary = new Dictionary<Vector2, TerrainChunk>();
+        private static readonly List<TerrainChunk> TerrainChunksVisibleLastUpdate = new List<TerrainChunk>();
         private void Start()
         {
             mapGenerator = FindObjectOfType<MapGenerator>();
             
             maxViewDist = detailLevels[detailLevels.Length - 1].visibleDstThreshold;
-            chunkSize = MapGenerator.MapChunkSize - 1;
-            chunksVisibleInViewDistance = Mathf.RoundToInt(maxViewDist / chunkSize);
+            _chunkSize = MapGenerator.MapChunkSize - 1;
+            _chunksVisibleInViewDistance = Mathf.RoundToInt(maxViewDist / _chunkSize);
             
             UpdateVisibleChunks();
         }
 
         private void Update()
         {
-            viewPosition = new Vector2(viewer.position.x, viewer.position.z) / scale;
+            viewPosition = new Vector2(viewer.position.x, viewer.position.z) / Scale;
 
-            if ((veiwerPositionOld - viewPosition).sqrMagnitude > sqrViewerMoveThresholdForChunkUpdate)
+            if ((veiwerPositionOld - viewPosition).sqrMagnitude > SqrViewerMoveThresholdForChunkUpdate)
             {
                 veiwerPositionOld = viewPosition;
                 UpdateVisibleChunks();
@@ -51,26 +51,26 @@ namespace Bin.WorldGeneration
 
         private void UpdateVisibleChunks()
         {
-            foreach (var terrainChunk in terrainChunksVisibleLastUpdate)
+            foreach (var terrainChunk in TerrainChunksVisibleLastUpdate)
             {
                 terrainChunk.SetVisible(false);
             }
-            terrainChunksVisibleLastUpdate.Clear();
+            TerrainChunksVisibleLastUpdate.Clear();
             
-            var currentChunkCoordX = Mathf.RoundToInt(viewPosition.x / chunkSize);
-            var currentChunkCoordY = Mathf.RoundToInt(viewPosition.y / chunkSize);
+            var currentChunkCoordX = Mathf.RoundToInt(viewPosition.x / _chunkSize);
+            var currentChunkCoordY = Mathf.RoundToInt(viewPosition.y / _chunkSize);
 
-            for (var yOffset = -chunksVisibleInViewDistance; yOffset <= chunksVisibleInViewDistance; yOffset++)
+            for (var yOffset = -_chunksVisibleInViewDistance; yOffset <= _chunksVisibleInViewDistance; yOffset++)
             {
-                for (var xOffset = -chunksVisibleInViewDistance; xOffset <= chunksVisibleInViewDistance; xOffset++)
+                for (var xOffset = -_chunksVisibleInViewDistance; xOffset <= _chunksVisibleInViewDistance; xOffset++)
                 {
                     var viewChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
 
-                    if (terrainChunksDictionary.ContainsKey(viewChunkCoord)) {
-                        terrainChunksDictionary[viewChunkCoord].UpdateTerrainChunk();
+                    if (_terrainChunksDictionary.ContainsKey(viewChunkCoord)) {
+                        _terrainChunksDictionary[viewChunkCoord].UpdateTerrainChunk();
 
                     } else {
-                        terrainChunksDictionary.Add(viewChunkCoord, new TerrainChunk(viewChunkCoord, chunkSize, detailLevels, transform, mapMaterial));
+                        _terrainChunksDictionary.Add(viewChunkCoord, new TerrainChunk(viewChunkCoord, _chunkSize, detailLevels, transform, mapMaterial));
                     }
                 }
             }
@@ -85,15 +85,15 @@ namespace Bin.WorldGeneration
             private readonly MeshRenderer _meshRenderer;
             private readonly MeshFilter _meshFilter;
 
-            private LODInfo[] detailLevels;
-            private LODMesh[] lodMeshes;
+            private readonly LODInfo[] _detailLevels;
+            private readonly LODMesh[] _lodMeshes;
             
-            private MapData mapData;
-            private bool mapDataRecieved;
-            private int previousLodIndex = -1;
+            private MapData _mapData;
+            private bool _mapDataRecieved;
+            private int _previousLodIndex = - 1;
             public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material)
             {
-                this.detailLevels = detailLevels;
+                _detailLevels = detailLevels;
                 
                 _position = coord * size;
                 _bounds = new Bounds(_position,Vector2.one * size);
@@ -105,15 +105,15 @@ namespace Bin.WorldGeneration
                 _meshFilter = _meshObject.AddComponent<MeshFilter>();
                 _meshRenderer.material = material;
                 
-                _meshObject.transform.position = positionV3 * scale;
+                _meshObject.transform.position = positionV3 * Scale;
                 _meshObject.transform.parent = parent;
-                _meshObject.transform.localScale = Vector3.one * scale;
+                _meshObject.transform.localScale = Vector3.one * Scale;
                 SetVisible(false);
 
-                lodMeshes = new LODMesh[detailLevels.Length];
+                _lodMeshes = new LODMesh[detailLevels.Length];
                 for (int i = 0; i < detailLevels.Length; i++)
                 {
-                    lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
+                    _lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
                 }
                 
                 mapGenerator.RequestMapData(_position, OnMapDataReceived);
@@ -121,8 +121,8 @@ namespace Bin.WorldGeneration
 
             private void OnMapDataReceived(MapData mapData)
             {
-                this.mapData = mapData;
-                mapDataRecieved = true;
+                this._mapData = mapData;
+                _mapDataRecieved = true;
 
                 Texture2D texture = TextureGenerator.TextureFromColorMap(mapData.colorMap, MapGenerator.MapChunkSize, MapGenerator.MapChunkSize);
                 _meshRenderer.material.mainTexture = texture;
@@ -138,17 +138,17 @@ namespace Bin.WorldGeneration
 
             public void UpdateTerrainChunk()
             {
-                if (mapDataRecieved)
+                if (_mapDataRecieved)
                 {
                     var viewDstFromNearestEdge = Mathf.Sqrt(_bounds.SqrDistance(viewPosition));
                     var visible = viewDstFromNearestEdge <= maxViewDist;
 
                     if (visible)
                     {
-                        int lodIndex = 0;
-                        for (int i = 0; i < detailLevels.Length - 1; i++)
+                        var lodIndex = 0;
+                        for (var i = 0; i < _detailLevels.Length - 1; i++)
                         {
-                            if (viewDstFromNearestEdge > detailLevels[i].visibleDstThreshold)
+                            if (viewDstFromNearestEdge > _detailLevels[i].visibleDstThreshold)
                             {
                                 lodIndex = i + 1;
                             }
@@ -158,20 +158,20 @@ namespace Bin.WorldGeneration
                             }
                         }
 
-                        if (lodIndex != previousLodIndex)
+                        if (lodIndex != _previousLodIndex)
                         {
-                            LODMesh lodMesh = lodMeshes[lodIndex];
+                            var lodMesh = _lodMeshes[lodIndex];
                             if (lodMesh.hasMesh)
                             {
-                                previousLodIndex = lodIndex;
+                                _previousLodIndex = lodIndex;
                                 _meshFilter.mesh = lodMesh.mesh;
                             }
                             else if (!lodMesh.hasRequestedMesh)
                             {
-                                lodMesh.RequestMesh(mapData);
+                                lodMesh.RequestMesh(_mapData);
                             }
                         }
-                        terrainChunksVisibleLastUpdate.Add(this);
+                        TerrainChunksVisibleLastUpdate.Add(this);
                     }
                     SetVisible(visible);
                 }

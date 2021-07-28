@@ -7,7 +7,7 @@ namespace Bin.WorldGeneration
 {
     public class MapGenerator : MonoBehaviour
     {
-        public enum DrawMode { NoiseMod, ColorMod ,Mesh}
+        public enum DrawMode { NoiseMod, ColorMod, Mesh, FalloffMap}
         public DrawMode drawMode;
 
         public Noise.NormalizeMode normalizeMode;
@@ -25,6 +25,8 @@ namespace Bin.WorldGeneration
         public int seed;
         public Vector2 offset;
 
+        public bool useFalloff;
+
         public float meshHeightMultiplier;
         public AnimationCurve meshHeightCurve;  
         
@@ -32,8 +34,15 @@ namespace Bin.WorldGeneration
 
         public TerrainType[] regions;
 
+        private float[,] falloffMap;
+        
         private readonly Queue<MapThreadInfo<MapData>> _mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
         private readonly Queue<MapThreadInfo<MeshData>> _meshDataThreadInfoQueue = new Queue<MapThreadInfo<MeshData>>();
+
+        private void Awake()
+        {
+            falloffMap = FalloffGenerator.GenerateFallofMap(MapChunkSize);
+        }
 
         public void DrawMapInEditor()
         {
@@ -46,6 +55,8 @@ namespace Bin.WorldGeneration
             } else if (drawMode == DrawMode.Mesh) {
                 display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                     TextureGenerator.TextureFromColorMap(mapData.colorMap, MapChunkSize, MapChunkSize));
+            } else if(drawMode == DrawMode.FalloffMap) {
+                 display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFallofMap(MapChunkSize)));
             }
         }
 
@@ -117,10 +128,13 @@ namespace Bin.WorldGeneration
             for (var y = 0; y < MapChunkSize; y++)
             {
                 for (var x = 0; x < MapChunkSize; x++)
-                { 
-                    
-                    var currentHeight = noiseMap[x, y];
+                {
+                    if (useFalloff)
+                    {
+                        noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - falloffMap[x, y]);
+                    }
 
+                    var currentHeight = noiseMap[x, y];
                     for (var i = 0; i < regions.Length; i++)
                     {
                         if (currentHeight >= regions[i].height)
@@ -145,6 +159,8 @@ namespace Bin.WorldGeneration
             if (octaves < 0) {
                 octaves = 0;
             }
+
+            falloffMap = FalloffGenerator.GenerateFallofMap(MapChunkSize);
         }
         
         private struct MapThreadInfo<T>
