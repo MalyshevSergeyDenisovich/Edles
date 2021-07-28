@@ -5,7 +5,7 @@ namespace Bin.WorldGeneration
 {
     public static class MeshGenerator
     {
-        public static MeshData GenerateTerrainMesh(float[,] heightMap, float heightMultiplier, AnimationCurve heightCurve, int levelOfDetail)
+        public static MeshData GenerateTerrainMesh(float[,] heightMap, float heightMultiplier, AnimationCurve heightCurve, int levelOfDetail, bool useFlatShading)
         {
             var localHeightCurve = new AnimationCurve(heightCurve.keys);
             
@@ -20,7 +20,7 @@ namespace Bin.WorldGeneration
 
             var verticesPerLine = (meshSize - 1) / meshSimplificationIncrement + 1;
             
-            var meshData = new MeshData(borderSize);
+            var meshData = new MeshData(borderSize, useFlatShading);
 
 
             var vertexIndicesMap = new int[borderSize][];
@@ -74,7 +74,7 @@ namespace Bin.WorldGeneration
                 }
             }
             
-            meshData.BakeNormals();
+            meshData.ProcessMesh();
 
             return meshData;
         }
@@ -82,9 +82,9 @@ namespace Bin.WorldGeneration
 
     public class MeshData
     {
-        private readonly Vector3[] vertices;
+        private Vector3[] vertices;
         private readonly int[] triangles;
-        private readonly Vector2[] uvs;
+        private Vector2[] uvs;
         private Vector3[] bakedNormals;
 
         private Vector3[] borderVertices;
@@ -92,9 +92,13 @@ namespace Bin.WorldGeneration
         
         private int triangleIndex;
         private int borderTriangleIndex;
+
+        private bool useFlatShading;
         
-        public MeshData(int verticesPerLine)
+        public MeshData(int verticesPerLine, bool useFlatShading)
         {
+            this.useFlatShading = useFlatShading;
+            
             vertices = new Vector3[verticesPerLine * verticesPerLine];
             uvs = new Vector2[verticesPerLine * verticesPerLine];
             triangles = new int[(verticesPerLine - 1) * (verticesPerLine - 1) * 6];
@@ -195,14 +199,47 @@ namespace Bin.WorldGeneration
             return Vector3.Cross(sideAB, sideAC);
         }
 
-        public void BakeNormals()
+        public void ProcessMesh()
+        {
+            if (useFlatShading)
+            {
+                FlatShading();
+            }
+            else
+            {
+                BakeNormals();
+            }
+        }
+
+        private void BakeNormals()
         {
             bakedNormals = CalculateNormals();
         }
 
+        private void FlatShading()
+        {
+            var flatShadedVertices = new Vector3[triangles.Length];
+            var flatShadedUvs = new Vector2[triangles.Length];
+            for (var i = 0; i < triangles.Length; i++)
+            {
+                flatShadedVertices[i] = vertices[triangles[i]];
+                flatShadedUvs[i] = uvs[triangles[i]];
+                triangles[i] = i;
+            }
+
+            vertices = flatShadedVertices;
+            uvs = flatShadedUvs;
+        }
+
         public Mesh CreateMesh()
         {
-            var mesh = new Mesh {vertices = vertices, triangles = triangles, uv = uvs, normals = bakedNormals};
+            var mesh = new Mesh {vertices = vertices, triangles = triangles, uv = uvs};
+            if (useFlatShading) {
+                mesh.RecalculateNormals();
+            } else {
+                mesh.normals = bakedNormals;
+            }
+
             return mesh;
         }
     }

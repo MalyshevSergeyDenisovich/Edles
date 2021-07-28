@@ -12,7 +12,9 @@ namespace Bin.WorldGeneration
 
         public Noise.NormalizeMode normalizeMode;
         
-        public const int MapChunkSize = 239;
+
+        public bool useFlatShading;
+        
         [Range(0,6)]
         public int editorPreviewLOD;
         public float noiseScale;
@@ -33,7 +35,8 @@ namespace Bin.WorldGeneration
         public bool autoUpdate;
 
         public TerrainType[] regions;
-
+        private static MapGenerator instance;
+        
         private float[,] falloffMap;
         
         private readonly Queue<MapThreadInfo<MapData>> _mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
@@ -42,6 +45,17 @@ namespace Bin.WorldGeneration
         private void Awake()
         {
             falloffMap = FalloffGenerator.GenerateFallofMap(MapChunkSize);
+        }
+
+        public static int MapChunkSize {
+            get{
+                if (instance == null)
+                {
+                    instance = FindObjectOfType<MapGenerator>();
+                }
+
+                return instance.useFlatShading ? 95 : 239;
+            }
         }
 
         public void DrawMapInEditor()
@@ -53,7 +67,7 @@ namespace Bin.WorldGeneration
             } else if(drawMode == DrawMode.ColorMod) {
                 display.DrawTexture(TextureGenerator.TextureFromColorMap(mapData.colorMap, MapChunkSize, MapChunkSize));   
             } else if (drawMode == DrawMode.Mesh) {
-                display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD, useFlatShading),
                     TextureGenerator.TextureFromColorMap(mapData.colorMap, MapChunkSize, MapChunkSize));
             } else if(drawMode == DrawMode.FalloffMap) {
                  display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFallofMap(MapChunkSize)));
@@ -89,7 +103,7 @@ namespace Bin.WorldGeneration
         
         private void MeshDataThread(MapData mapData, int lod, Action<MeshData> callback)
         {
-            var meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
+            var meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod, useFlatShading);
             lock (_meshDataThreadInfoQueue)
             {
                 _meshDataThreadInfoQueue.Enqueue(new MapThreadInfo<MeshData>(callback, meshData));
