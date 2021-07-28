@@ -23,7 +23,7 @@ namespace Bin.WorldGeneration
         private int chunksVisibleInViewDistance;
 
         private Dictionary<Vector2, TerrainChunk> terrainChunksDictionary = new Dictionary<Vector2, TerrainChunk>();
-        private List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
+        private static List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
         private void Start()
         {
             mapGenerator = FindObjectOfType<MapGenerator>();
@@ -66,10 +66,7 @@ namespace Bin.WorldGeneration
 
                     if (terrainChunksDictionary.ContainsKey(viewChunkCoord)) {
                         terrainChunksDictionary[viewChunkCoord].UpdateTerrainChunk();
-                        if (terrainChunksDictionary[viewChunkCoord].IsVisible())
-                        {
-                            terrainChunksVisibleLastUpdate.Add(terrainChunksDictionary[viewChunkCoord]);
-                        }
+
                     } else {
                         terrainChunksDictionary.Add(viewChunkCoord, new TerrainChunk(viewChunkCoord, chunkSize, detailLevels, transform, mapMaterial));
                     }
@@ -82,9 +79,7 @@ namespace Bin.WorldGeneration
             private readonly GameObject _meshObject;
             private readonly Vector2 _position;
             private Bounds _bounds;
-
-
-
+            
             private readonly MeshRenderer _meshRenderer;
             private readonly MeshFilter _meshFilter;
 
@@ -173,8 +168,8 @@ namespace Bin.WorldGeneration
                                 lodMesh.RequestMesh(mapData);
                             }
                         }
+                        terrainChunksVisibleLastUpdate.Add(this);
                     }
-
                     SetVisible(visible);
                 }
             }
