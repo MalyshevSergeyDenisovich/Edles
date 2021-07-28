@@ -5,6 +5,8 @@ namespace Bin.WorldGeneration
 {
     public class EndlessTerrain : MonoBehaviour
     {
+        private const float scale = 5f;
+        
         private const float ViewerMoveThresholdForChunkUpdate = 25f;
         private const float sqrViewerMoveThresholdForChunkUpdate = ViewerMoveThresholdForChunkUpdate * ViewerMoveThresholdForChunkUpdate; 
         
@@ -37,7 +39,7 @@ namespace Bin.WorldGeneration
 
         private void Update()
         {
-            viewPosition = new Vector2(viewer.position.x, viewer.position.z);
+            viewPosition = new Vector2(viewer.position.x, viewer.position.z) / scale;
 
             if ((veiwerPositionOld - viewPosition).sqrMagnitude > sqrViewerMoveThresholdForChunkUpdate)
             {
@@ -103,8 +105,9 @@ namespace Bin.WorldGeneration
                 _meshFilter = _meshObject.AddComponent<MeshFilter>();
                 _meshRenderer.material = material;
                 
-                _meshObject.transform.position = positionV3;
+                _meshObject.transform.position = positionV3 * scale;
                 _meshObject.transform.parent = parent;
+                _meshObject.transform.localScale = Vector3.one * scale;
                 SetVisible(false);
 
                 lodMeshes = new LODMesh[detailLevels.Length];

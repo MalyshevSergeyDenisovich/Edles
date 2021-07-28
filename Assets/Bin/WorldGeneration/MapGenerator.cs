@@ -10,6 +10,8 @@ namespace Bin.WorldGeneration
         public enum DrawMode { NoiseMod, ColorMod ,Mesh}
         public DrawMode drawMode;
 
+        public Noise.NormalizeMode normalizeMode;
+        
         public const int MapChunkSize = 241;
         [Range(0,6)]
         public int editorPreviewLOD;
@@ -106,7 +108,10 @@ namespace Bin.WorldGeneration
 
         private MapData GenerateMapData(Vector2 centre)
         {
-            var noiseMap = Noise.GenerateNoseMap(MapChunkSize, MapChunkSize, seed, noiseScale, octaves, persistence, lacunarity, centre + offset);
+            var noiseMap = Noise.GenerateNoseMap(MapChunkSize, MapChunkSize, seed, noiseScale, 
+                octaves, 
+                persistence,
+                lacunarity, centre + offset, normalizeMode);
 
             var colorMap = new Color[MapChunkSize * MapChunkSize];
             for (var y = 0; y < MapChunkSize; y++)
@@ -118,9 +123,12 @@ namespace Bin.WorldGeneration
 
                     for (var i = 0; i < regions.Length; i++)
                     {
-                        if (currentHeight <= regions[i].height)
+                        if (currentHeight >= regions[i].height)
                         {
                             colorMap[y * MapChunkSize + x] = regions[i].color;
+                        }
+                        else
+                        {
                             break;
                         }
                     }

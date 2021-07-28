@@ -5,6 +5,7 @@ namespace Bin.WorldGeneration
 {
     public static class Noise
     {
+        public enum NormalizeMode { Local, Global }
         public  static  float[,] GenerateNoseMap(
             int mapWidth,
             int mapHeight,
@@ -13,21 +14,30 @@ namespace Bin.WorldGeneration
             int octaves,
             float persistence,
             float lacunarity,
-            Vector2 offset)
+            Vector2 offset,
+            NormalizeMode normalizeMode
+            )
         {
             var noiseMap = new float[mapWidth, mapHeight];
 
             var prng = new System.Random(seed);
             var octaveOffset = new Vector2[octaves];
 
+            var maxPossibleHeight = 0f;
+            var amplitude = 1f;
+            var frequency = 1f;
+            
             var halfWidth = mapWidth / 2f;
             var halfHeight = mapHeight / 2f;
             
             for (var i = 0; i < octaves; i++)
             {
                 var offsetX = prng.Next(-100000, 100000) + offset.x;
-                var offsetY = prng.Next(-100000, 100000) + offset.y;
+                var offsetY = prng.Next(-100000, 100000) - offset.y;
                 octaveOffset[i] = new Vector2(offsetX, offsetY);
+
+                maxPossibleHeight += amplitude;
+                amplitude *= persistence;
             }
             
             if (scale <= 0)
@@ -35,22 +45,22 @@ namespace Bin.WorldGeneration
                 scale = .0001f;
             }
 
-            var maxNoiseHeight = float.MinValue;
-            var minNoiseHeight = float.MaxValue;
+            var maxLocalNoiseHeight = float.MinValue;
+            var minLocalNoiseHeight = float.MaxValue;
             
             for (var y = 0; y < mapHeight; y++)
             {
                 for (var x = 0; x < mapWidth; x++)
                 {
 
-                    var amplitude = 1f;
-                    var frequency = 1f;
+                    amplitude = 1f;
+                    frequency = 1f;
                     var noiseHeight = 0f; 
                     
                     for (var i = 0; i < octaves; i++)
                     {
-                        var sampleX = (x - halfWidth)  / scale * frequency + octaveOffset[i].x;
-                        var sampleY = (y - halfHeight) / scale * frequency + octaveOffset[i].y;
+                        var sampleX = (x - halfWidth  + octaveOffset[i].x)  / scale * frequency;
+                        var sampleY = (y - halfHeight + octaveOffset[i].y) / scale * frequency;
 
                         var perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
                         noiseHeight += perlinValue * amplitude;
@@ -59,13 +69,13 @@ namespace Bin.WorldGeneration
                         frequency *= lacunarity;
                     }
 
-                    if (noiseHeight > maxNoiseHeight)
+                    if (noiseHeight > maxLocalNoiseHeight)
                     {
-                        maxNoiseHeight = noiseHeight;
+                        maxLocalNoiseHeight = noiseHeight;
                     }
-                    else if (noiseHeight < minNoiseHeight)
+                    else if (noiseHeight < minLocalNoiseHeight)
                     {
-                        minNoiseHeight = noiseHeight;
+                        minLocalNoiseHeight = noiseHeight;
                     }
                      
                     noiseMap[x, y] = noiseHeight;
@@ -76,7 +86,15 @@ namespace Bin.WorldGeneration
             {
                 for (var x = 0; x < mapWidth; x++)
                 {
-                    noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
+                    if (normalizeMode == NormalizeMode.Local)
+                    {
+                        noiseMap[x, y] = Mathf.InverseLerp(minLocalNoiseHeight, maxLocalNoiseHeight, noiseMap[x, y]);
+                    }
+                    else
+                    {
+                        var normalizedHeight = (noiseMap[x, y] + 1) / (maxPossibleHeight);
+                        noiseMap[x, y] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
+                    }
                 }
             }
 
