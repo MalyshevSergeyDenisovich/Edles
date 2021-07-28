@@ -5,7 +5,7 @@ namespace Bin.WorldGeneration
 {
     public class EndlessTerrain : MonoBehaviour
     {
-        private const float Scale = 5f;
+        private const float Scale = 2f;
         
         private const float ViewerMoveThresholdForChunkUpdate = 25f;
         private const float SqrViewerMoveThresholdForChunkUpdate = ViewerMoveThresholdForChunkUpdate * ViewerMoveThresholdForChunkUpdate; 
@@ -84,9 +84,11 @@ namespace Bin.WorldGeneration
             
             private readonly MeshRenderer _meshRenderer;
             private readonly MeshFilter _meshFilter;
+            private readonly MeshCollider _meshCollider;
 
             private readonly LODInfo[] _detailLevels;
             private readonly LODMesh[] _lodMeshes;
+            private readonly LODMesh collisionLODMesh;
             
             private MapData _mapData;
             private bool _mapDataRecieved;
@@ -103,6 +105,7 @@ namespace Bin.WorldGeneration
                 _meshObject = new GameObject("TerrainChunk");
                 _meshRenderer = _meshObject.AddComponent<MeshRenderer>();
                 _meshFilter = _meshObject.AddComponent<MeshFilter>();
+                _meshCollider = _meshObject.AddComponent<MeshCollider>();
                 _meshRenderer.material = material;
                 
                 _meshObject.transform.position = positionV3 * Scale;
@@ -111,9 +114,13 @@ namespace Bin.WorldGeneration
                 SetVisible(false);
 
                 _lodMeshes = new LODMesh[detailLevels.Length];
-                for (int i = 0; i < detailLevels.Length; i++)
+                for (var i = 0; i < detailLevels.Length; i++)
                 {
                     _lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
+                    if (detailLevels[i].useForCollied)
+                    {
+                        collisionLODMesh = _lodMeshes[i];
+                    }
                 }
                 
                 mapGenerator.RequestMapData(_position, OnMapDataReceived);
@@ -121,10 +128,10 @@ namespace Bin.WorldGeneration
 
             private void OnMapDataReceived(MapData mapData)
             {
-                this._mapData = mapData;
+                _mapData = mapData;
                 _mapDataRecieved = true;
 
-                Texture2D texture = TextureGenerator.TextureFromColorMap(mapData.colorMap, MapGenerator.MapChunkSize, MapGenerator.MapChunkSize);
+                var texture = TextureGenerator.TextureFromColorMap(mapData.colorMap, MapGenerator.MapChunkSize, MapGenerator.MapChunkSize);
                 _meshRenderer.material.mainTexture = texture;
                 UpdateTerrainChunk();
                 //mapGenerator.RequestMeshData(mapData, OnMeshDataReceived);
@@ -171,6 +178,16 @@ namespace Bin.WorldGeneration
                                 lodMesh.RequestMesh(_mapData);
                             }
                         }
+
+                        if (lodIndex == 0)
+                        {
+                            if (collisionLODMesh.hasMesh) {
+                                _meshCollider.sharedMesh = collisionLODMesh.mesh;
+                            } else if (!collisionLODMesh.hasRequestedMesh) {
+                                collisionLODMesh.RequestMesh(_mapData);
+                            }
+                        }
+
                         TerrainChunksVisibleLastUpdate.Add(this);
                     }
                     SetVisible(visible);
@@ -220,6 +237,7 @@ namespace Bin.WorldGeneration
         {
             public int lod;
             public float visibleDstThreshold;
+            public bool useForCollied;
         }
     }
 }

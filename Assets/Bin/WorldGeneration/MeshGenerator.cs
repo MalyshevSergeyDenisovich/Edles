@@ -67,6 +67,9 @@ namespace Bin.WorldGeneration
                     vertexIndex++;
                 }
             }
+            
+            meshData.BakeNormals();
+
             return meshData;
         }
     }
@@ -76,6 +79,7 @@ namespace Bin.WorldGeneration
         private readonly Vector3[] vertices;
         private readonly int[] triangles;
         private readonly Vector2[] uvs;
+        private Vector3[] bakedNormals;
 
         private Vector3[] borderVertices;
         private int[] borderTriangles;
@@ -185,9 +189,14 @@ namespace Bin.WorldGeneration
             return Vector3.Cross(sideAB, sideAC);
         }
 
+        public void BakeNormals()
+        {
+            bakedNormals = CalculateNormals();
+        }
+
         public Mesh CreateMesh()
         {
-            var mesh = new Mesh {vertices = vertices, triangles = triangles, uv = uvs, normals = CalculateNormals()};
+            var mesh = new Mesh {vertices = vertices, triangles = triangles, uv = uvs, normals = bakedNormals};
             return mesh;
         }
     }
