@@ -22,7 +22,13 @@ namespace Bin.WorldGeneration
             
             var meshData = new MeshData(borderSize);
 
-            int[,] vertexIndicesMap = new int[borderSize, borderSize];
+
+            var vertexIndicesMap = new int[borderSize][];
+            for (var index = 0; index < borderSize; index++)
+            {
+                vertexIndicesMap[index] = new int[borderSize];
+            }
+
             var meshVertexIndex = 0;
             var borderVertexIndex = -1;
 
@@ -33,10 +39,10 @@ namespace Bin.WorldGeneration
                     var isBorderVertex = y == 0 || y == borderSize - 1 || x == 0 || x == borderSize - 1;
 
                     if (isBorderVertex) {
-                        vertexIndicesMap[x, y] = borderVertexIndex;
+                        vertexIndicesMap[x][y] = borderVertexIndex;
                         borderVertexIndex--;
                     } else {
-                        vertexIndicesMap[x, y] = meshVertexIndex;
+                        vertexIndicesMap[x][y] = meshVertexIndex;
                         meshVertexIndex++;
                     }
                 }
@@ -47,7 +53,7 @@ namespace Bin.WorldGeneration
             {
                 for (var x = 0; x < borderSize; x += meshSimplificationIncrement)
                 {
-                    var vertexIndex = vertexIndicesMap[x, y];
+                    var vertexIndex = vertexIndicesMap[x][y];
                     var percent = new Vector2((x - meshSimplificationIncrement) / (float) meshSize,
                         (y - meshSimplificationIncrement) / (float) meshSize);
                     var height = localHeightCurve.Evaluate(heightMap[x, y]) * heightMultiplier;
@@ -57,10 +63,10 @@ namespace Bin.WorldGeneration
                     
                     if (x < borderSize - 1 && y < borderSize - 1)
                     {
-                        var a = vertexIndicesMap[x, y];
-                        var b = vertexIndicesMap[x + meshSimplificationIncrement, y];
-                        var c = vertexIndicesMap[x, y + meshSimplificationIncrement];
-                        var d = vertexIndicesMap[x + meshSimplificationIncrement, y + meshSimplificationIncrement];
+                        var a = vertexIndicesMap[x][y];
+                        var b = vertexIndicesMap[x + meshSimplificationIncrement][y];
+                        var c = vertexIndicesMap[x][y + meshSimplificationIncrement];
+                        var d = vertexIndicesMap[x + meshSimplificationIncrement][y + meshSimplificationIncrement];
                         meshData.AddTriangle(a, d, c);
                         meshData.AddTriangle(d, a, b);
                     }
