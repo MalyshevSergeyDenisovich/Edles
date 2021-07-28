@@ -12,7 +12,7 @@ namespace Bin.WorldGeneration
 
         public Noise.NormalizeMode normalizeMode;
         
-        public const int MapChunkSize = 241;
+        public const int MapChunkSize = 239;
         [Range(0,6)]
         public int editorPreviewLOD;
         public float noiseScale;
@@ -119,7 +119,7 @@ namespace Bin.WorldGeneration
 
         private MapData GenerateMapData(Vector2 centre)
         {
-            var noiseMap = Noise.GenerateNoseMap(MapChunkSize, MapChunkSize, seed, noiseScale, 
+            var noiseMap = Noise.GenerateNoseMap(MapChunkSize + 2, MapChunkSize + 2, seed, noiseScale, 
                 octaves, 
                 persistence,
                 lacunarity, centre + offset, normalizeMode);
