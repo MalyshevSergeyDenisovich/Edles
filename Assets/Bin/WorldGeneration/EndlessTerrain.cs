@@ -5,7 +5,7 @@ namespace Bin.WorldGeneration
 {
     public class EndlessTerrain : MonoBehaviour
     {
-        private const float Scale = 2f;
+        
         
         private const float ViewerMoveThresholdForChunkUpdate = 25f;
         private const float SqrViewerMoveThresholdForChunkUpdate = ViewerMoveThresholdForChunkUpdate * ViewerMoveThresholdForChunkUpdate; 
@@ -31,7 +31,7 @@ namespace Bin.WorldGeneration
             mapGenerator = FindObjectOfType<MapGenerator>();
             
             maxViewDist = detailLevels[detailLevels.Length - 1].visibleDstThreshold;
-            _chunkSize = MapGenerator.MapChunkSize - 1;
+            _chunkSize = mapGenerator.MapChunkSize - 1;
             _chunksVisibleInViewDistance = Mathf.RoundToInt(maxViewDist / _chunkSize);
             
             UpdateVisibleChunks();
@@ -39,7 +39,7 @@ namespace Bin.WorldGeneration
 
         private void Update()
         {
-            viewPosition = new Vector2(viewer.position.x, viewer.position.z) / Scale;
+            viewPosition = new Vector2(viewer.position.x, viewer.position.z) / mapGenerator.terrainData.uniformScale;
 
             if ((veiwerPositionOld - viewPosition).sqrMagnitude > SqrViewerMoveThresholdForChunkUpdate)
             {
@@ -108,9 +108,9 @@ namespace Bin.WorldGeneration
                 _meshCollider = _meshObject.AddComponent<MeshCollider>();
                 _meshRenderer.material = material;
                 
-                _meshObject.transform.position = positionV3 * Scale;
+                _meshObject.transform.position = positionV3 * mapGenerator.terrainData.uniformScale;
                 _meshObject.transform.parent = parent;
-                _meshObject.transform.localScale = Vector3.one * Scale;
+                _meshObject.transform.localScale = Vector3.one * mapGenerator.terrainData.uniformScale;
                 SetVisible(false);
 
                 _lodMeshes = new LODMesh[detailLevels.Length];
@@ -130,17 +130,10 @@ namespace Bin.WorldGeneration
             {
                 _mapData = mapData;
                 _mapDataRecieved = true;
-
-                var texture = TextureGenerator.TextureFromColorMap(mapData.colorMap, MapGenerator.MapChunkSize, MapGenerator.MapChunkSize);
-                _meshRenderer.material.mainTexture = texture;
+                
                 UpdateTerrainChunk();
-                //mapGenerator.RequestMeshData(mapData, OnMeshDataReceived);
             }
 
-            private void OnMeshDataReceived(MeshData meshData)
-            {
-                _meshFilter.mesh = meshData.CreateMesh();
-            }
 
 
             public void UpdateTerrainChunk()
