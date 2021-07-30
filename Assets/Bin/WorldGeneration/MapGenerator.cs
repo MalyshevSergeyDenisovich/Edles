@@ -145,8 +145,10 @@ namespace Bin.WorldGeneration
                     }
                 }
             }
-            
 
+            textureData.UpdateMeshHeight(terrainMaterial, terrainData.minHeight, terrainData.maxHeight);
+            
+            
             return new MapData(noiseMap);
         }
 

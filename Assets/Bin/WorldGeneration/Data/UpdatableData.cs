@@ -11,14 +11,14 @@ namespace Bin.WorldGeneration.Data
         {
             if (autoUpdate)
             {
-                NotifyOfUpdatedValues();
+                UnityEditor.EditorApplication.update += NotifyOfUpdatedValues;
             }
         }
 
         public void NotifyOfUpdatedValues()
         {
+            UnityEditor.EditorApplication.update -= NotifyOfUpdatedValues;
             OnValuesUpdated?.Invoke();
         }
-        
     }
 }
