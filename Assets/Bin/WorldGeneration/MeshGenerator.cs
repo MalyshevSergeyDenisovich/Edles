@@ -7,40 +7,36 @@ namespace Bin.WorldGeneration
 	{
 		public static MeshData GenerateTerrainMesh(float[,] heightMap, MeshSettings meshSettings, int levelOfDetail)
 		{
-			var meshSimplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
+			var skipIncrement = levelOfDetail == 0 ? 1 : levelOfDetail * 2;
 
+			var numVertsPerLine = meshSettings.NumVertsPerLine;
 
-			var borderedSize = heightMap.GetLength(0);
-			var meshSize = borderedSize - 2 * meshSimplificationIncrement;
-			var meshSizeUnsimplified = borderedSize - 2;
+			var topLeft = new Vector2(-1, 1) * meshSettings.MeshWorldSize / 2f;
+			
+			var meshData = new MeshData(numVertsPerLine, skipIncrement, meshSettings.useFlatShading);
 
-			var topLeftX = (meshSizeUnsimplified - 1) / -2f;
-			var topLeftZ = (meshSizeUnsimplified - 1) / 2f;
-
-			var verticesPerLine = (meshSize - 1) / meshSimplificationIncrement + 1;
-
-			var meshData = new MeshData(verticesPerLine, meshSettings.useFlatShading);
-
-			var vertexIndicesMap = new int[borderedSize][];
-			for (var index = 0; index < borderedSize; index++)
+			var vertexIndicesMap = new int[numVertsPerLine][];
+			for (var index = 0; index < numVertsPerLine; index++)
 			{
-				vertexIndicesMap[index] = new int[borderedSize];
+				vertexIndicesMap[index] = new int[numVertsPerLine];
 			}
 
 			var meshVertexIndex = 0;
-			var borderVertexIndex = -1;
+			var outOfVertexIndex = -1;
 
-			for (var y = 0; y < borderedSize; y += meshSimplificationIncrement) 
+			for (var y = 0; y < numVertsPerLine; y++) 
 			{
-				for (var x = 0; x < borderedSize; x += meshSimplificationIncrement)
+				for (var x = 0; x < numVertsPerLine; x++)
 				{
-					var isBorderVertex = y == 0 || y == borderedSize - 1 || x == 0 || x == borderedSize - 1;
+					var isOutOfMeshVertex = y == 0 || y == numVertsPerLine - 1 || x == 0 || x == numVertsPerLine - 1;
 
-					if (isBorderVertex)
+					var isSkippedVertex = x > 2 && x < numVertsPerLine - 3 && y > 2 && y < numVertsPerLine - 3 &&
+					                      ((x - 2) % skipIncrement != 0 || (y - 2) % skipIncrement != 0); 
+					if (isOutOfMeshVertex)
 					{
-						vertexIndicesMap[x][y] = borderVertexIndex;
-						borderVertexIndex--;
-					} else
+						vertexIndicesMap[x][y] = outOfVertexIndex;
+						outOfVertexIndex--;
+					} else if (!isSkippedVertex)
 					{
 						vertexIndicesMap[x][y] = meshVertexIndex;
 						meshVertexIndex++;
@@ -48,28 +44,56 @@ namespace Bin.WorldGeneration
 				}
 			}
 
-			for (var y = 0; y < borderedSize; y += meshSimplificationIncrement) 
+			for (var y = 0; y < numVertsPerLine; y++) 
 			{
-				for (var x = 0; x < borderedSize; x += meshSimplificationIncrement)
+				for (var x = 0; x < numVertsPerLine; x++)
 				{
-					var vertexIndex = vertexIndicesMap[x][y];
-					var percent = new Vector2((x - meshSimplificationIncrement) / (float) meshSize,
-						(y - meshSimplificationIncrement) / (float) meshSize);
-					var height = heightMap[x, y];
-					var vertexPosition =
-						new Vector3((topLeftX + percent.x * meshSizeUnsimplified) * meshSettings.meshScale, height,
-							(topLeftZ - percent.y * meshSizeUnsimplified) * meshSettings.meshScale);
-
-					meshData.AddVertex(vertexPosition, percent, vertexIndex);
-
-					if (x < borderedSize - 1 && y < borderedSize - 1)
+					var isSkippedVertex = x > 2 && x < numVertsPerLine - 3 && y > 2 && y < numVertsPerLine - 3 && ((x - 2) % skipIncrement != 0 || (y - 2) % skipIncrement != 0);
+					
+					
+					if (!isSkippedVertex)
 					{
-						var a = vertexIndicesMap[x][y];
-						var b = vertexIndicesMap[x + meshSimplificationIncrement][y];
-						var c = vertexIndicesMap[x][y + meshSimplificationIncrement];
-						var d = vertexIndicesMap[x + meshSimplificationIncrement][y + meshSimplificationIncrement];
-						meshData.AddTriangle(a, d, c);
-						meshData.AddTriangle(d, a, b);
+						var isOutOfMeshVertex = y == 0 || y == numVertsPerLine - 1 || x == 0 || x == numVertsPerLine - 1;
+						var isMeshEdgeVertex = (y == 1 || y == numVertsPerLine - 2 || x == 1 || x == numVertsPerLine - 2) && !isOutOfMeshVertex;
+						var isMainVertex = (x - 2) % skipIncrement == 0 && (y - 2) % skipIncrement == 0 && !isOutOfMeshVertex && !isMeshEdgeVertex;
+						var isEdgeConnectionVertex = (y == 2 || y == numVertsPerLine - 3 || x == 2 || x == numVertsPerLine - 3) && !isOutOfMeshVertex && !isMeshEdgeVertex && !isMainVertex;
+						
+						var vertexIndex = vertexIndicesMap[x][y];
+						var percent = new Vector2 (x - 1, y - 1) / (numVertsPerLine - 3);
+						var vertexPosition2D = topLeft + new Vector2(percent.x,-percent.y) * meshSettings.MeshWorldSize;
+						var height = heightMap[x, y];
+
+						if (isEdgeConnectionVertex)
+						{
+							var isVertical = x == 2 || x == numVertsPerLine - 3;
+
+							var dstToMainVertexA = (isVertical ? y - 2 : x - 2) % skipIncrement;
+							var dstToMainVertexB = skipIncrement - dstToMainVertexA;
+							var dstPercentAToB = dstToMainVertexA / (float) skipIncrement;
+							
+							var heightMainVertexA = heightMap[isVertical ? x : x - dstToMainVertexA, isVertical ? y - dstToMainVertexA : y];
+							var heightMainVertexB = heightMap[isVertical ? x : x + dstToMainVertexB, isVertical ? y + dstToMainVertexB : y];
+
+							height = heightMainVertexA * (1 - dstPercentAToB) + heightMainVertexB * dstPercentAToB;
+						}
+
+						meshData.AddVertex( new Vector3(vertexPosition2D.x, height, vertexPosition2D.y), percent, vertexIndex);
+
+						var createTriangle = x < numVertsPerLine - 1 && y < numVertsPerLine - 1 && (!isEdgeConnectionVertex || (x != 2 && y != 2));
+						
+						if (createTriangle)
+						{
+							var currentIncrement =
+								isMainVertex && x != numVertsPerLine - 3 && y != numVertsPerLine - 3
+									? skipIncrement
+									: 1;
+							var a = vertexIndicesMap[x][y];
+							var b = vertexIndicesMap[x + currentIncrement][y];
+							var c = vertexIndicesMap[x][y + currentIncrement];
+							var d = vertexIndicesMap[x + currentIncrement][y + currentIncrement];
+							meshData.AddTriangle(a, d, c);
+							meshData.AddTriangle(d, a, b);
+						}
 					}
 				}
 			}
@@ -88,31 +112,41 @@ namespace Bin.WorldGeneration
 		private Vector2[] _uvs;
 		private Vector3[] _bakedNormals;
 
-		private readonly Vector3[] _borderVertices;
-		private readonly int[] _borderTriangles;
+		private readonly Vector3[] _outOfMeshVertices;
+		private readonly int[] _outOfMeshTriangles;
 
 		private int _triangleIndex;
-		private int _borderTriangleIndex;
+		private int _iutOfMeshTriangleIndex;
 
 		private readonly bool _useFlatShading;
 
-		public MeshData(int verticesPerLine, bool useFlatShading)
+		public MeshData(int numVertsPerLine,int skipIncrement, bool useFlatShading)
 		{
 			_useFlatShading = useFlatShading;
 
-			_vertices = new Vector3[verticesPerLine * verticesPerLine];
-			_uvs = new Vector2[verticesPerLine * verticesPerLine];
-			_triangles = new int[(verticesPerLine - 1) * (verticesPerLine - 1) * 6];
 
-			_borderVertices = new Vector3[verticesPerLine * 4 + 4];
-			_borderTriangles = new int[24 * verticesPerLine];
+			var numMeshEdgeVertices = (numVertsPerLine - 2) * 4 - 4;
+			var numEdgeConnectionVertices = (skipIncrement - 1) * (numVertsPerLine - 5) / skipIncrement * 4;
+			var numMainVerticesPerLine = (numVertsPerLine - 5) / skipIncrement + 1;
+			var numMainVertices = numMainVerticesPerLine * numMainVerticesPerLine;
+			
+			_vertices = new Vector3[numMeshEdgeVertices + numEdgeConnectionVertices + numMainVertices];
+			_uvs = new Vector2[_vertices.Length];
+
+			var numMeshEdgeTriangles = 8 * (numVertsPerLine - 4);
+			var numMainTriangles = (numMainVerticesPerLine - 1) * (numMainVerticesPerLine - 1) * 2;
+
+			_triangles = new int[(numMeshEdgeTriangles + numMainTriangles) * 3];
+
+			_outOfMeshVertices = new Vector3[numVertsPerLine * 4 - 4];
+			_outOfMeshTriangles = new int[24 * (numVertsPerLine - 2)];
 		}
 
 		public void AddVertex(Vector3 vertexPosition, Vector2 uv, int vertexIndex)
 		{
 			if (vertexIndex < 0)
 			{
-				_borderVertices[-vertexIndex - 1] = vertexPosition;
+				_outOfMeshVertices[-vertexIndex - 1] = vertexPosition;
 			} else
 			{
 				_vertices[vertexIndex] = vertexPosition;
@@ -124,10 +158,10 @@ namespace Bin.WorldGeneration
 		{
 			if (a < 0 || b < 0 || c < 0)
 			{
-				_borderTriangles[_borderTriangleIndex] = a;
-				_borderTriangles[_borderTriangleIndex + 1] = b;
-				_borderTriangles[_borderTriangleIndex + 2] = c;
-				_borderTriangleIndex += 3;
+				_outOfMeshTriangles[_iutOfMeshTriangleIndex] = a;
+				_outOfMeshTriangles[_iutOfMeshTriangleIndex + 1] = b;
+				_outOfMeshTriangles[_iutOfMeshTriangleIndex + 2] = c;
+				_iutOfMeshTriangleIndex += 3;
 			} else {
 				_triangles[_triangleIndex] = a;
 				_triangles[_triangleIndex + 1] = b;
@@ -153,13 +187,13 @@ namespace Bin.WorldGeneration
 				vertexNormals[vertexIndexC] += triangleNormal;
 			}
 
-			var borderTriangleCount = _borderTriangles.Length / 3;
+			var borderTriangleCount = _outOfMeshTriangles.Length / 3;
 			for (var i = 0; i < borderTriangleCount; i++)
 			{
 				var normalTriangleIndex = i * 3;
-				var vertexIndexA = _borderTriangles[normalTriangleIndex];
-				var vertexIndexB = _borderTriangles[normalTriangleIndex + 1];
-				var vertexIndexC = _borderTriangles[normalTriangleIndex + 2];
+				var vertexIndexA = _outOfMeshTriangles[normalTriangleIndex];
+				var vertexIndexB = _outOfMeshTriangles[normalTriangleIndex + 1];
+				var vertexIndexC = _outOfMeshTriangles[normalTriangleIndex + 2];
 
 				var triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC);
 				if (vertexIndexA >= 0)
@@ -189,13 +223,13 @@ namespace Bin.WorldGeneration
 
 		private Vector3 SurfaceNormalFromIndices(int indexA, int indexB, int indexC)
 		{
-			var pointA = (indexA < 0) ? _borderVertices[-indexA - 1] : _vertices[indexA];
-			var pointB = (indexB < 0) ? _borderVertices[-indexB - 1] : _vertices[indexB];
-			var pointC = (indexC < 0) ? _borderVertices[-indexC - 1] : _vertices[indexC];
+			var pointA = (indexA < 0) ? _outOfMeshVertices[-indexA - 1] : _vertices[indexA];
+			var pointB = (indexB < 0) ? _outOfMeshVertices[-indexB - 1] : _vertices[indexB];
+			var pointC = (indexC < 0) ? _outOfMeshVertices[-indexC - 1] : _vertices[indexC];
 
-			var sideAB = pointB - pointA;
-			var sideAC = pointC - pointA;
-			return Vector3.Cross(sideAB, sideAC).normalized;
+			var abSide = pointB - pointA;
+			var acSide = pointC - pointA;
+			return Vector3.Cross(abSide, acSide).normalized;
 		}
 
 		public void ProcessMesh()

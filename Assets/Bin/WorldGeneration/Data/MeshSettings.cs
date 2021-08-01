@@ -20,7 +20,7 @@ namespace Bin.WorldGeneration.Data
 
 
 		
-		public int NumVertsPerLine => supportedChunkSizes [(useFlatShading) ? flatshadedChunkSizeIndex : chunkSizeIndex] + 1;
+		public int NumVertsPerLine => supportedChunkSizes [(useFlatShading) ? flatshadedChunkSizeIndex : chunkSizeIndex] + 5;
 
 		public float MeshWorldSize => (NumVertsPerLine - 3) * meshScale;
 	}
