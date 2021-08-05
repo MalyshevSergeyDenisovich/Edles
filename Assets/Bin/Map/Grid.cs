@@ -5,14 +5,15 @@ namespace Bin.Map
 {
     public class Grid : MonoBehaviour
     {
-        public LayerMask unwalkableMask;
-        public Vector2 gridWorldSize;
-        public float nodeRadius;
+        [SerializeField] private bool displayGridGizmos;
+        [SerializeField] private LayerMask unwalkableMask;
+        [SerializeField] private Vector2 gridWorldSize;
+        [SerializeField] private float nodeRadius;
         private Node[,] _grid;
 
         private float _nodeDiameter;
         private int _gridSizeX, _gridSizeY;
-        private void Start()
+        private void Awake()
         {
             _nodeDiameter = nodeRadius * 2;
             _gridSizeX = Mathf.RoundToInt(gridWorldSize.x / _nodeDiameter);
@@ -37,7 +38,6 @@ namespace Bin.Map
 
                     var walkable = !Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask);
                     _grid[x, y] = new Node(walkable, worldPoint, x, y);
-                    
                 }
             }
         }
@@ -79,25 +79,15 @@ namespace Bin.Map
         }
 
 
-        public List<Node> path;
         private void OnDrawGizmos()
         {
             Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
-            if (_grid != null)
+            if (_grid != null && displayGridGizmos)
             {
                 foreach (var node in _grid)
                 {
                     Gizmos.color = node.Walkable ? Color.white : Color.red;
-
-                    if (path != null)
-                    {
-                        if (path.Contains(node))
-                        {
-                            Gizmos.color = Color.black;
-                        }
-                    }
-
                     Gizmos.DrawCube(node.WorldPosition, Vector3.one * (_nodeDiameter - .1f));
                 }
             }
