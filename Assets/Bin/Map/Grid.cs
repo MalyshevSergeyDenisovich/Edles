@@ -20,7 +20,7 @@ namespace Bin.Map
             CreateGrid();
         }
 
-
+        public int MaxSize => _gridSizeX * _gridSizeY;
 
         private void CreateGrid()
         {
@@ -53,8 +53,8 @@ namespace Bin.Map
                     if (x == 0 && y == 0)
                         continue;
 
-                    var checkX = node.gridX + x;
-                    var checkY = node.gridY + y;
+                    var checkX = node.GridX + x;
+                    var checkY = node.GridY + y;
 
                     if (checkX >= 0 && checkX <= _gridSizeX && checkY >= 0 && checkY <= _gridSizeY)
                     {
@@ -88,7 +88,7 @@ namespace Bin.Map
             {
                 foreach (var node in _grid)
                 {
-                    Gizmos.color = node.walkable ? Color.white : Color.red;
+                    Gizmos.color = node.Walkable ? Color.white : Color.red;
 
                     if (path != null)
                     {
@@ -98,7 +98,7 @@ namespace Bin.Map
                         }
                     }
 
-                    Gizmos.DrawCube(node.worldPosition, Vector3.one * (_nodeDiameter - .1f));
+                    Gizmos.DrawCube(node.WorldPosition, Vector3.one * (_nodeDiameter - .1f));
                 }
             }
         }

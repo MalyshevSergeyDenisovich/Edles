@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Bin.Map;
 using UnityEngine;
 using Grid = Bin.Map.Grid;
@@ -9,8 +8,6 @@ namespace Bin.Pathfindings
     public class Pathfinding : MonoBehaviour
     {
         public Transform seeker, target;
-        
-        
         private Grid _grid;
 
         private void Awake()
@@ -28,23 +25,14 @@ namespace Bin.Pathfindings
             var startNode = _grid.GetNodeFromWorldPoint(startPos);
             var targetNode = _grid.GetNodeFromWorldPoint(targetPos);
 
-            var openSet = new List<Node>();
+            var openSet = new Heep<Node>(_grid.MaxSize);
             var closedSet = new HashSet<Node>();
             
             openSet.Add(startNode);
 
             while (openSet.Count > 0)
             {
-                var currentNode = openSet[0];
-                for (var i = 1; i < openSet.Count; i++)
-                {
-                    if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost ==currentNode.fCost && openSet[i].hCost < currentNode.hCost)
-                    {
-                        currentNode = openSet[i];
-                    }
-                }
-
-                openSet.Remove(currentNode);
+                var currentNode = openSet.RemoveFirst();
                 closedSet.Add(currentNode);
 
                 if (currentNode == targetNode)
@@ -55,7 +43,7 @@ namespace Bin.Pathfindings
 
                 foreach (var neighbour in _grid.GetNeighbours(currentNode))
                 {
-                    if (!neighbour.walkable || closedSet.Contains(neighbour))
+                    if (!neighbour.Walkable || closedSet.Contains(neighbour))
                     {
                         continue;
                     }
@@ -65,7 +53,7 @@ namespace Bin.Pathfindings
                     {
                         neighbour.gCost = newMovementCostToNeighbour;
                         neighbour.hCost = GetDistance(neighbour, targetNode);
-                        neighbour.parent = currentNode;
+                        neighbour.Parent = currentNode;
                         
                         if (!openSet.Contains(neighbour))
                             openSet.Add(neighbour);
@@ -82,7 +70,7 @@ namespace Bin.Pathfindings
             while (currentNode != startNode)
             {
                 path.Add(currentNode);
-                currentNode = currentNode.parent;
+                currentNode = currentNode.Parent;
             }
             path.Reverse();
 
@@ -91,8 +79,8 @@ namespace Bin.Pathfindings
 
         private int GetDistance(Node nodeA, Node nodeB)
         {
-            var dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
-            var dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
+            var dstX = Mathf.Abs(nodeA.GridX - nodeB.GridX);
+            var dstY = Mathf.Abs(nodeA.GridY - nodeB.GridY);
 
             if (dstX > dstY)
             {
