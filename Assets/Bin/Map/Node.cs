@@ -8,6 +8,7 @@ namespace Bin.Map
         public Vector3 WorldPosition;
         public readonly int GridX;
         public readonly int GridY;
+        public int MovementPenalty; 
         
         public int gCost;
         public int hCost;
@@ -15,12 +16,13 @@ namespace Bin.Map
         public Node Parent;
 
         private int _heapIndex;
-        public Node(bool walkable, Vector3 worldPosition, int gridX, int gridY)
+        public Node(bool walkable, Vector3 worldPosition, int gridX, int gridY, int movementPenalty)
         {
             Walkable = walkable;
             WorldPosition = worldPosition;
             GridX = gridX;
             GridY = gridY;
+            MovementPenalty = movementPenalty;
         }
 
         public int fCost => gCost + hCost;

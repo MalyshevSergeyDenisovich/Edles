@@ -53,7 +53,9 @@ namespace Bin.Pathfindings
                             continue;
                         }
 
-                        var newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+                        var newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) +
+                                                         neighbour.MovementPenalty;
+                        
                         if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                         {
                             neighbour.gCost = newMovementCostToNeighbour;
@@ -61,7 +63,13 @@ namespace Bin.Pathfindings
                             neighbour.Parent = currentNode;
 
                             if (!openSet.Contains(neighbour))
+                            {
                                 openSet.Add(neighbour);
+                            }
+                            else
+                            {
+                                openSet.UpdateItem(neighbour);
+                            }
                         }
                     }
                 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bin.Map
@@ -9,6 +10,10 @@ namespace Bin.Map
         [SerializeField] private LayerMask unwalkableMask;
         [SerializeField] private Vector2 gridWorldSize;
         [SerializeField] private float nodeRadius;
+        [SerializeField] private TerrainType[] walkableRegions;
+        private LayerMask _walkableLayerMask;
+        private Dictionary<int, int> _walkableRegionsDictionary = new Dictionary<int, int>();
+        
         private Node[,] _grid;
 
         private float _nodeDiameter;
@@ -18,6 +23,13 @@ namespace Bin.Map
             _nodeDiameter = nodeRadius * 2;
             _gridSizeX = Mathf.RoundToInt(gridWorldSize.x / _nodeDiameter);
             _gridSizeY = Mathf.RoundToInt(gridWorldSize.y / _nodeDiameter);
+
+            foreach (var region in walkableRegions)
+            {
+                _walkableLayerMask.value = _walkableLayerMask |= region.TerrainMask.value;
+                _walkableRegionsDictionary.Add((int)Mathf.Log(region.TerrainMask.value, 2), region.TerrainPenalty);
+            }
+            
             CreateGrid();
         }
 
@@ -37,7 +49,19 @@ namespace Bin.Map
                                      Vector3.forward * (y * _nodeDiameter + nodeRadius);
 
                     var walkable = !Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask);
-                    _grid[x, y] = new Node(walkable, worldPoint, x, y);
+                    var movementPenalty = 0;
+
+                    if (walkable)
+                    {
+                        var ray = new Ray(worldPoint + Vector3.up *50, Vector3.down);
+                        RaycastHit hit;
+                        if (Physics.Raycast(ray, out hit, 100, _walkableLayerMask))
+                        {
+                            _walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
+                        }
+                    }
+
+                    _grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
                 }
             }
         }
@@ -91,6 +115,13 @@ namespace Bin.Map
                     Gizmos.DrawCube(node.WorldPosition, Vector3.one * (_nodeDiameter - .1f));
                 }
             }
+        }
+        
+        [Serializable]
+        public class TerrainType
+        {
+            public LayerMask TerrainMask;
+            public int TerrainPenalty;
         }
     }
 }
