@@ -11,9 +11,9 @@ namespace Bin.Pathfindings
         private const float PathUpdateMoveThreshold = 0.5f;
         
         [SerializeField] private Transform target;
-        [SerializeField] private float Speed = 7f;
-        [SerializeField] private float _turnSpeed = 20f;
-        [SerializeField] private float _turnDst = .1f;
+        [SerializeField] private float speed = 7f;
+        [SerializeField] private float turnSpeed = 20f;
+        [SerializeField] private float turnDst = .1f;
         [SerializeField] private float stoppingDst = 0.1f;
 
         private Path _path;
@@ -27,7 +27,7 @@ namespace Bin.Pathfindings
         {
             if (pathSuccessful)
             {
-                _path = new Path(waypoints, transform.position, _turnDst, stoppingDst);
+                _path = new Path(waypoints, transform.position, turnDst, stoppingDst);
                 StopCoroutine(FollowPath());
                 StartCoroutine(FollowPath());
             }
@@ -40,7 +40,7 @@ namespace Bin.Pathfindings
                 yield return new WaitForSeconds(.3f);
             }
 
-            PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+            PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
             
             const float sqrThreshold = PathUpdateMoveThreshold * PathUpdateMoveThreshold;
             var targetPosOld = target.position;
@@ -50,7 +50,7 @@ namespace Bin.Pathfindings
                 yield return new WaitForSeconds(MINPathUpdateTime);
                 if ((target.position - targetPosOld).sqrMagnitude > sqrThreshold)
                 {
-                    PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+                    PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
                     targetPosOld = target.position;
                 }
             }
@@ -94,8 +94,8 @@ namespace Bin.Pathfindings
                     }
 
                     var targetRotation = Quaternion.LookRotation(_path.LookPoints[pathIndex] - transform.position);
-                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * _turnSpeed);
-                    transform.Translate(Vector3.forward * (Time.deltaTime * Speed * speedPercent), Space.Self);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+                    transform.Translate(Vector3.forward * (Time.deltaTime * speed * speedPercent), Space.Self);
                 }
 
                 yield return null;

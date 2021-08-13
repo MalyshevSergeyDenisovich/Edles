@@ -11,22 +11,20 @@ namespace Bin.Pathfindings
 {
     public class Pathfinding : MonoBehaviour
     {
-        private PathRequestManager _requestManager;
         private Grid _grid;
 
         private void Awake()
         {
-            _requestManager = GetComponent<PathRequestManager>();
             _grid = GetComponent<Grid>();
         }
         
-        private IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
+        public void FindPath(PathRequest request, Action<PathResult>callback)
         { 
             var waypoints = new Vector3[0]; 
             var pathSuccess = false;
             
-            var startNode = _grid.GetNodeFromWorldPoint(startPos);
-            var targetNode = _grid.GetNodeFromWorldPoint(targetPos);
+            var startNode = _grid.GetNodeFromWorldPoint(request.pathStart);
+            var targetNode = _grid.GetNodeFromWorldPoint(request.pathEnd);
 
             if (startNode.Walkable && targetNode.Walkable)
             {
@@ -74,12 +72,13 @@ namespace Bin.Pathfindings
                     }
                 }
             }
-            yield return null;
             if (pathSuccess)
             {
                 waypoints = RetracePath(startNode, targetNode);
+                pathSuccess = waypoints.Length > 0;
             }
-            _requestManager.FinishedProcessingPath(waypoints, pathSuccess);
+
+            callback(new PathResult(waypoints, pathSuccess, request.callback));
         }
 
         private Vector3[] RetracePath(Node startNode, Node endNode)
@@ -127,11 +126,6 @@ namespace Bin.Pathfindings
                 return 14 * dstY + 10 * (dstX - dstY);
             }
             return 14 * dstX + 10 * (dstY - dstX);
-        }
-
-        public void StartFindPath(Vector3 pathStart, Vector3 pathEnd)
-        {
-            StartCoroutine(FindPath(pathStart, pathEnd));
         }
     }
 }
