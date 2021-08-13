@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
-
 
 namespace Bin.Pathfindings
 {
@@ -104,10 +102,7 @@ namespace Bin.Pathfindings
 
         public void OnDrawGizmos()
         {
-            if (_path != null)
-            {
-                _path.DrawWithGizmos();
-            }
+            _path?.DrawWithGizmos();
         }
     }
 }

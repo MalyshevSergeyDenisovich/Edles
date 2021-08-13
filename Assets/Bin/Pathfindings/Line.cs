@@ -6,15 +6,15 @@ namespace Bin.Pathfindings
     {
         private const float VerticalLineGradient = 1e5f;
         
-        private float _gradient;
-        private float _yIntercept;
+        private readonly float _gradient;
+        private readonly float _yIntercept;
 
-        private Vector2 _pointOnLine1;
-        private Vector2 _pointOnLine2;
+        private readonly Vector2 _pointOnLine1;
+        private readonly Vector2 _pointOnLine2;
 
-        private float _gradientPerpendicular;
+        private readonly float _gradientPerpendicular;
 
-        private bool _approachSide;
+        private readonly bool _approachSide;
         
         public Line(Vector2 pointOnLine, Vector2 pointPerpendicularToLine)
         {

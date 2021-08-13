@@ -7,7 +7,7 @@ namespace Bin.Pathfindings
 {
     public class PathRequestManager : MonoBehaviour
     {
-        private Queue<PathResult> results = new Queue<PathResult>();
+        private readonly Queue<PathResult> _results = new Queue<PathResult>();
         
         private static PathRequestManager _instance;
         private Pathfinding _pathfinding;
@@ -20,15 +20,15 @@ namespace Bin.Pathfindings
 
         private void Update()
         {
-            if (results.Count > 0)
+            if (_results.Count > 0)
             {
-                var itemsInQueue = results.Count;
-                lock (results)
+                var itemsInQueue = _results.Count;
+                lock (_results)
                 {
                     for (var i = 0; i < itemsInQueue; i++)
                     {
-                        var result = results.Dequeue();
-                        result.callback(result.path, result.success);
+                        var result = _results.Dequeue();
+                        result.Callback(result.Path, result.Success);
                     }
                 }
             }
@@ -43,41 +43,41 @@ namespace Bin.Pathfindings
             threadStart.Invoke();
         }
 
-        public void FinishedProcessingPath(PathResult result)
+        private void FinishedProcessingPath(PathResult result)
         {
-            lock (results)
+            lock (_results)
             {
-                results.Enqueue(result);   
+                _results.Enqueue(result);   
             }
         }
         
 
     }
-    public struct PathResult
+    public readonly struct PathResult
     {
-        public Vector3[] path;
-        public bool success;
-        public Action<Vector3[], bool> callback;
+        public readonly Vector3[] Path;
+        public readonly bool Success;
+        public readonly Action<Vector3[], bool> Callback;
 
         public PathResult(Vector3[] path, bool success, Action<Vector3[], bool> callback)
         {
-            this.path = path;
-            this.success = success;
-            this.callback = callback;
+            Path = path;
+            Success = success;
+            Callback = callback;
         }
     }
     
     public struct PathRequest
     {
-        public Vector3 pathStart;
-        public Vector3 pathEnd;
-        public Action<Vector3[], bool> callback;
+        public Vector3 PathStart;
+        public Vector3 PathEnd;
+        public readonly Action<Vector3[], bool> Callback;
 
         public PathRequest(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback)
         {
-            this.pathStart = pathStart;
-            this.pathEnd = pathEnd;
-            this.callback = callback;
+            PathStart = pathStart;
+            PathEnd = pathEnd;
+            Callback = callback;
         }
     }
 }

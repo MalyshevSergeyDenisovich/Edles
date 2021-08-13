@@ -13,7 +13,7 @@ namespace Bin.Map
         [SerializeField] private TerrainType[] walkableRegions;
         [SerializeField] private int obstacleProximityPenalty = 10;
         private LayerMask _walkableLayerMask;
-        private Dictionary<int, int> _walkableRegionsDictionary = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _walkableRegionsDictionary = new Dictionary<int, int>();
         
         private Node[,] _grid;
 
@@ -31,8 +31,8 @@ namespace Bin.Map
 
             foreach (var region in walkableRegions)
             {
-                _walkableLayerMask.value = _walkableLayerMask |= region.TerrainMask.value;
-                _walkableRegionsDictionary.Add((int)Mathf.Log(region.TerrainMask.value, 2), region.TerrainPenalty);
+                _walkableLayerMask.value = _walkableLayerMask |= region.terrainMask.value;
+                _walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainPenalty);
             }
             
             CreateGrid();
@@ -58,8 +58,7 @@ namespace Bin.Map
 
 
                     var ray = new Ray(worldPoint + Vector3.up * 50, Vector3.down);
-                    RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit, 100, _walkableLayerMask))
+                    if (Physics.Raycast(ray, out var hit, 100, _walkableLayerMask))
                     {
                         _walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
                     }
@@ -135,7 +134,7 @@ namespace Bin.Map
             
         }
 
-        public List<Node> GetNeighbours(Node node)
+        public IEnumerable<Node> GetNeighbours(Node node)
         {
             var neighbours = new List<Node>();
             
@@ -192,8 +191,8 @@ namespace Bin.Map
         [Serializable]
         public class TerrainType
         {
-            public LayerMask TerrainMask;
-            public int TerrainPenalty;
+            public LayerMask terrainMask;
+            public int terrainPenalty;
         }
     }
 }

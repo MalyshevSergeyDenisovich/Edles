@@ -1,8 +1,5 @@
-﻿
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Bin.Map;
 using UnityEngine;
 using Grid = Bin.Map.Grid;
@@ -23,8 +20,8 @@ namespace Bin.Pathfindings
             var waypoints = new Vector3[0]; 
             var pathSuccess = false;
             
-            var startNode = _grid.GetNodeFromWorldPoint(request.pathStart);
-            var targetNode = _grid.GetNodeFromWorldPoint(request.pathEnd);
+            var startNode = _grid.GetNodeFromWorldPoint(request.PathStart);
+            var targetNode = _grid.GetNodeFromWorldPoint(request.PathEnd);
 
             if (startNode.Walkable && targetNode.Walkable)
             {
@@ -51,13 +48,13 @@ namespace Bin.Pathfindings
                             continue;
                         }
 
-                        var newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) +
+                        var newMovementCostToNeighbour = currentNode.GCost + GetDistance(currentNode, neighbour) +
                                                          neighbour.MovementPenalty;
                         
-                        if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                        if (newMovementCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbour))
                         {
-                            neighbour.gCost = newMovementCostToNeighbour;
-                            neighbour.hCost = GetDistance(neighbour, targetNode);
+                            neighbour.GCost = newMovementCostToNeighbour;
+                            neighbour.HCost = GetDistance(neighbour, targetNode);
                             neighbour.Parent = currentNode;
 
                             if (!openSet.Contains(neighbour))
@@ -78,7 +75,7 @@ namespace Bin.Pathfindings
                 pathSuccess = waypoints.Length > 0;
             }
 
-            callback(new PathResult(waypoints, pathSuccess, request.callback));
+            callback(new PathResult(waypoints, pathSuccess, request.Callback));
         }
 
         private Vector3[] RetracePath(Node startNode, Node endNode)
@@ -98,7 +95,7 @@ namespace Bin.Pathfindings
             return waypoints;
         }
 
-        private Vector3[] SimplifyPath(List<Node> path)
+        private static Vector3[] SimplifyPath(IReadOnlyList<Node> path)
         {
             var waypoints = new List<Vector3>();
             var directionOld = Vector2.zero;
@@ -116,7 +113,7 @@ namespace Bin.Pathfindings
             return waypoints.ToArray();
         }
 
-        private int GetDistance(Node nodeA, Node nodeB)
+        private static int GetDistance(Node nodeA, Node nodeB)
         {
             var dstX = Mathf.Abs(nodeA.GridX - nodeB.GridX);
             var dstY = Mathf.Abs(nodeA.GridY - nodeB.GridY);

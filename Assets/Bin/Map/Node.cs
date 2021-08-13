@@ -10,12 +10,11 @@ namespace Bin.Map
         public readonly int GridY;
         public int MovementPenalty; 
         
-        public int gCost;
-        public int hCost;
+        public int GCost;
+        public int HCost;
 
         public Node Parent;
 
-        private int _heapIndex;
         public Node(bool walkable, Vector3 worldPosition, int gridX, int gridY, int movementPenalty)
         {
             Walkable = walkable;
@@ -25,22 +24,18 @@ namespace Bin.Map
             MovementPenalty = movementPenalty;
         }
 
-        public int fCost => gCost + hCost;
+        private int FCost => GCost + HCost;
         public int CompareTo(Node other)
         {
-            var compare = fCost.CompareTo(other.fCost);
+            var compare = FCost.CompareTo(other.FCost);
             if (compare == 0)
             {
-                compare = hCost.CompareTo(other.hCost);
+                compare = HCost.CompareTo(other.HCost);
             }
 
             return -compare;
         }
         
-        public int HeapIndex
-        {
-            get => _heapIndex;
-            set => _heapIndex = value;
-        }
+        public int HeapIndex { get; set; }
     }
 }
