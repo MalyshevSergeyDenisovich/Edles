@@ -6,13 +6,13 @@ using Grid = Bin.Map.Grid;
 
 namespace Bin.Pathfindings
 {
-    public class Pathfinding : MonoBehaviour
+    public class Pathfinding
     {
-        private Grid _grid;
+        private readonly Grid _grid;
 
-        private void Awake()
+        public Pathfinding(Grid grid)
         {
-            _grid = GetComponent<Grid>();
+            _grid = grid;
         }
         
         public void FindPath(PathRequest request, Action<PathResult>callback)

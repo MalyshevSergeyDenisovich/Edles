@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb49c415c73a941729b11c3076268f15, type: 3}
-  m_Name: New Height Map Settings
+  m_Name: Height Map Settings
   m_EditorClassIdentifier: 
   autoUpdate: 1
   noiseSettings:
@@ -19,7 +19,7 @@ MonoBehaviour:
     octaves: 6
     persistance: 0.5
     lacunarity: 2
-    seed: 0
+    seed: -14
     offset: {x: 0, y: 0}
   useFalloff: 0
   heightMultiplier: 50
@@ -36,14 +36,23 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.1453547
     - serializedVersion: 3
-      time: 0.0114905145
-      value: 0.0014958377
-      inSlope: 0.73125577
-      outSlope: 0.73125577
+      time: 0.21459128
+      value: 0.036279872
+      inSlope: 0.10510268
+      outSlope: 0.10510268
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.15950371
-      outWeight: 0.085346304
+      outWeight: 0.3534225
+    - serializedVersion: 3
+      time: 0.41507545
+      value: 0.23790164
+      inSlope: 1.3856695
+      outSlope: 1.3856695
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.15087827
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 0.74533415
       value: 0.4878164

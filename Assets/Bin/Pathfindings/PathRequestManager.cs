@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using Grid = Bin.Map.Grid;
 
 namespace Bin.Pathfindings
 {
@@ -15,21 +16,24 @@ namespace Bin.Pathfindings
         private void Awake()
         {
             _instance = this;
-            _pathfinding = GetComponent<Pathfinding>();
+            _pathfinding = new Pathfinding(GetComponent<Grid>());
         }
 
         private void Update()
         {
-            if (_results.Count > 0)
+            DoOnUpdate();
+        }
+
+        private void DoOnUpdate()
+        {
+            if (_results.Count <= 0) return;
+            var itemsInQueue = _results.Count;
+            lock (_results)
             {
-                var itemsInQueue = _results.Count;
-                lock (_results)
+                for (var i = 0; i < itemsInQueue; i++)
                 {
-                    for (var i = 0; i < itemsInQueue; i++)
-                    {
-                        var result = _results.Dequeue();
-                        result.Callback(result.Path, result.Success);
-                    }
+                    var result = _results.Dequeue();
+                    result.Callback(result.Path, result.Success);
                 }
             }
         }
