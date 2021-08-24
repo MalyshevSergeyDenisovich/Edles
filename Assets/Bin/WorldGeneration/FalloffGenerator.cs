@@ -25,8 +25,8 @@ namespace Bin.WorldGeneration
 
 		private static float Evaluate(float value)
 		{
-			var a = 3;
-			var b = 2.2f;
+			const int a = 3;
+			const float b = 2.2f;
 
 			return Mathf.Pow (value, a) / (Mathf.Pow (value, a) + Mathf.Pow (b - b * value, a));
 		}

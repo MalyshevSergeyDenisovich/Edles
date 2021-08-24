@@ -11,7 +11,7 @@ namespace Bin.Edit
 		{
 			base.OnInspectorGUI ();
 
-			UpdatableData data = (UpdatableData)target;
+			var data = (UpdatableData)target;
 
 			if (GUILayout.Button ("Update")) {
 				data.NotifyOfUpdatedValues ();

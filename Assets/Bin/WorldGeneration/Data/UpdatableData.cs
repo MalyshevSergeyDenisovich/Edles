@@ -4,7 +4,6 @@ namespace Bin.WorldGeneration.Data
 {
 	public class UpdatableData : ScriptableObject
 	{
-
 		public event System.Action OnValuesUpdated;
 		public bool autoUpdate;
 
@@ -12,7 +11,8 @@ namespace Bin.WorldGeneration.Data
 
 		protected virtual void OnValidate() 
 		{
-			if (autoUpdate) {
+			if (autoUpdate) 
+			{
 				UnityEditor.EditorApplication.update += NotifyOfUpdatedValues;
 			}
 		}

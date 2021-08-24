@@ -25,7 +25,7 @@ namespace Bin.WorldGeneration
 
 		public Material terrainMaterial;
 		
-		[Range(0,MeshSettings.numSupportedLODs-1)]
+		[Range(0,MeshSettings.NumSupportedLODs-1)]
 		public int editorPreviewLOD;
 		public bool autoUpdate;
 
@@ -42,7 +42,7 @@ namespace Bin.WorldGeneration
 				DrawTexture(TextureGenerator.TextureFromHeightMap(heightMap));
 			} else if (drawMode == DrawMode.Mesh)
 			{
-				DrawMesh (MeshGenerator.GenerateTerrainMesh(heightMap.values,meshSettings, editorPreviewLOD));
+				DrawMesh (MeshGenerator.GenerateTerrainMesh(heightMap.Values,meshSettings, editorPreviewLOD));
 			} else if (drawMode == DrawMode.FalloffMap)
 			{
 				DrawTexture(TextureGenerator.TextureFromHeightMap(

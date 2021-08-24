@@ -8,7 +8,7 @@ namespace Bin.WorldGeneration
 	public class ThreadedDataRequester : MonoBehaviour
 	{
 		private static ThreadedDataRequester _instance;
-		private Queue<ThreadInfo> _dataQueue = new Queue<ThreadInfo>();
+		private readonly Queue<ThreadInfo> _dataQueue = new Queue<ThreadInfo>();
 
 		private void Awake()
 		{
@@ -17,12 +17,12 @@ namespace Bin.WorldGeneration
 
 		public static void RequestData(Func<object> generateData, Action<object> callback)
 		{
-			ThreadStart threadStart = delegate
+			void ThreadStart()
 			{
 				_instance.DataThread(generateData, callback);
-			};
+			}
 
-			new Thread(threadStart).Start();
+			new Thread(ThreadStart).Start();
 		}
 
 		private void DataThread(Func<object> generateData, Action<object> callback)
@@ -35,26 +35,26 @@ namespace Bin.WorldGeneration
 		}
 
 
-		private void Update() 
+		private void Update()
 		{
-			if (_dataQueue.Count > 0) {
-				for (int i = 0; i < _dataQueue.Count; i++)
-				{
-					ThreadInfo threadInfo = _dataQueue.Dequeue();
-					threadInfo.callback(threadInfo.parameter);
-				}
+			if (_dataQueue.Count <= 0) return;
+			for (var i = 0; i < _dataQueue.Count; i++)
+			{
+				var threadInfo = _dataQueue.Dequeue();
+				threadInfo.Callback(threadInfo.Parameter);
 			}
 		}
+		
 
-		struct ThreadInfo
+		private readonly struct ThreadInfo
 		{
-			public readonly Action<object> callback;
-			public readonly object parameter;
+			public readonly Action<object> Callback;
+			public readonly object Parameter;
 
 			public ThreadInfo (Action<object> callback, object parameter)
 			{
-				this.callback = callback;
-				this.parameter = parameter;
+				Callback = callback;
+				Parameter = parameter;
 			}
 
 		}

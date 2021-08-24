@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Bin.WorldGeneration
+namespace Bin.Edit
 {
 	public class HideOnPlay : MonoBehaviour
 	{
