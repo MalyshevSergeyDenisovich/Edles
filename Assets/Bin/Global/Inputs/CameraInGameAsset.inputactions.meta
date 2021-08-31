@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c743beb175ac33649b9fc4666398fcf3
+guid: a1a82e74e0418344da566320ddd13b16
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -11,4 +11,4 @@ ScriptedImporter:
   generateWrapperCode: 1
   wrapperCodePath: 
   wrapperClassName: 
-  wrapperCodeNamespace: 
+  wrapperCodeNamespace: Bin.Global.Inputs

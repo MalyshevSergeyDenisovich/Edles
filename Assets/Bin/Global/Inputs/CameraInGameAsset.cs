@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Bin/Global/Inputs/PlayerInputAction.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Bin/Global/Inputs/CameraInGameAsset.inputactions'
 
 using System;
 using System.Collections;
@@ -8,39 +8,47 @@ using UnityEngine.InputSystem.Utilities;
 
 namespace Bin.Global.Inputs
 {
-    public class PlayerInputActions : IInputActionCollection, IDisposable
+    public class @CameraInGameAsset : IInputActionCollection, IDisposable
     {
         public InputActionAsset asset { get; }
-        public PlayerInputActions()
+        public @CameraInGameAsset()
         {
             asset = InputActionAsset.FromJson(@"{
-    ""name"": ""PlayerInputAction"",
+    ""name"": ""CameraInGameAsset"",
     ""maps"": [
         {
-            ""name"": ""PLayerActions"",
-            ""id"": ""9af42938-9c9c-4d2f-a020-1eda56e93589"",
+            ""name"": ""InGame"",
+            ""id"": ""6f223625-3681-4918-8311-4f40b4494b5b"",
             ""actions"": [
                 {
                     ""name"": ""Movement"",
-                    ""type"": ""Button"",
-                    ""id"": ""0e67c57a-f296-496f-b1e1-991478092968"",
-                    ""expectedControlType"": ""Button"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""e219317f-869e-43f6-8705-7a5742610b03"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
                 {
                     ""name"": ""Rotation"",
-                    ""type"": ""Button"",
-                    ""id"": ""ed6081d7-9cce-4f69-a59c-5d297251d93b"",
+                    ""type"": ""Value"",
+                    ""id"": ""4d794488-aa55-4806-bb8e-646da1dc1d23"",
                     ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""52c68b16-9b25-44b2-bd00-b01e0ba0f304"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
                 }
             ],
             ""bindings"": [
                 {
-                    ""name"": ""WASD"",
-                    ""id"": ""0fc6b911-0875-4f6f-8b2f-f5bb79bab9bb"",
+                    ""name"": ""2D Vector"",
+                    ""id"": ""37705c5f-b220-49d3-a07b-e7b46355744f"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -51,7 +59,7 @@ namespace Bin.Global.Inputs
                 },
                 {
                     ""name"": ""up"",
-                    ""id"": ""d96612e9-83d1-4d7e-91db-3b1cafeba030"",
+                    ""id"": ""799e71de-8249-4978-b3ef-460aba66f64e"",
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -62,7 +70,7 @@ namespace Bin.Global.Inputs
                 },
                 {
                     ""name"": ""down"",
-                    ""id"": ""efdfac9d-3a23-4c17-95ad-0da5b0216dc0"",
+                    ""id"": ""f7905f1d-b7c7-462e-a8fc-24057c605c46"",
                     ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -73,7 +81,7 @@ namespace Bin.Global.Inputs
                 },
                 {
                     ""name"": ""left"",
-                    ""id"": ""041bc428-849f-4f0f-85e1-f572bd066d03"",
+                    ""id"": ""426b7a26-6ff6-4707-9948-982fb50c6c7e"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -84,7 +92,7 @@ namespace Bin.Global.Inputs
                 },
                 {
                     ""name"": ""right"",
-                    ""id"": ""189d83d7-cfec-48a0-8960-d0b65d746096"",
+                    ""id"": ""b8590753-0b9b-43dc-8770-4a201962c987"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -95,7 +103,7 @@ namespace Bin.Global.Inputs
                 },
                 {
                     ""name"": ""1D Axis"",
-                    ""id"": ""ed3bc20d-b882-4fea-a77e-1b74846a4354"",
+                    ""id"": ""d1c8517a-7b39-4b4f-8567-9e249793c34b"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -106,7 +114,7 @@ namespace Bin.Global.Inputs
                 },
                 {
                     ""name"": ""negative"",
-                    ""id"": ""b845e67f-18bc-4beb-afde-708866f1855b"",
+                    ""id"": ""f0f6a8b7-88f8-48a6-9906-d3597d393237"",
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -117,7 +125,7 @@ namespace Bin.Global.Inputs
                 },
                 {
                     ""name"": ""positive"",
-                    ""id"": ""b219e502-0f03-456c-8061-17ac0f49770a"",
+                    ""id"": ""ff4aae17-b435-49ee-9d4a-064a27c9b7e1"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -125,16 +133,28 @@ namespace Bin.Global.Inputs
                     ""action"": ""Rotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""443201ad-8023-4506-a862-c3be818721ec"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
     ],
     ""controlSchemes"": []
 }");
-            // PLayerActions
-            m_PLayerActions = asset.FindActionMap("PLayerActions", throwIfNotFound: true);
-            m_PLayerActions_Movement = m_PLayerActions.FindAction("Movement", throwIfNotFound: true);
-            m_PLayerActions_Rotation = m_PLayerActions.FindAction("Rotation", throwIfNotFound: true);
+            // InGame
+            m_InGame = asset.FindActionMap("InGame", throwIfNotFound: true);
+            m_InGame_Movement = m_InGame.FindAction("Movement", throwIfNotFound: true);
+            m_InGame_Rotation = m_InGame.FindAction("Rotation", throwIfNotFound: true);
+            m_InGame_Scroll = m_InGame.FindAction("Scroll", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -181,34 +201,39 @@ namespace Bin.Global.Inputs
             asset.Disable();
         }
 
-        // PLayerActions
-        private readonly InputActionMap m_PLayerActions;
-        private IPLayerActionsActions m_PLayerActionsActionsCallbackInterface;
-        private readonly InputAction m_PLayerActions_Movement;
-        private readonly InputAction m_PLayerActions_Rotation;
-        public struct PLayerActionsActions
+        // InGame
+        private readonly InputActionMap m_InGame;
+        private IInGameActions m_InGameActionsCallbackInterface;
+        private readonly InputAction m_InGame_Movement;
+        private readonly InputAction m_InGame_Rotation;
+        private readonly InputAction m_InGame_Scroll;
+        public struct InGameActions
         {
-            private PlayerInputActions m_Wrapper;
-            public PLayerActionsActions(PlayerInputActions wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Movement => m_Wrapper.m_PLayerActions_Movement;
-            public InputAction @Rotation => m_Wrapper.m_PLayerActions_Rotation;
-            public InputActionMap Get() { return m_Wrapper.m_PLayerActions; }
+            private @CameraInGameAsset m_Wrapper;
+            public InGameActions(@CameraInGameAsset wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Movement => m_Wrapper.m_InGame_Movement;
+            public InputAction @Rotation => m_Wrapper.m_InGame_Rotation;
+            public InputAction @Scroll => m_Wrapper.m_InGame_Scroll;
+            public InputActionMap Get() { return m_Wrapper.m_InGame; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
             public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(PLayerActionsActions set) { return set.Get(); }
-            public void SetCallbacks(IPLayerActionsActions instance)
+            public static implicit operator InputActionMap(InGameActions set) { return set.Get(); }
+            public void SetCallbacks(IInGameActions instance)
             {
-                if (m_Wrapper.m_PLayerActionsActionsCallbackInterface != null)
+                if (m_Wrapper.m_InGameActionsCallbackInterface != null)
                 {
-                    @Movement.started -= m_Wrapper.m_PLayerActionsActionsCallbackInterface.OnMovement;
-                    @Movement.performed -= m_Wrapper.m_PLayerActionsActionsCallbackInterface.OnMovement;
-                    @Movement.canceled -= m_Wrapper.m_PLayerActionsActionsCallbackInterface.OnMovement;
-                    @Rotation.started -= m_Wrapper.m_PLayerActionsActionsCallbackInterface.OnRotation;
-                    @Rotation.performed -= m_Wrapper.m_PLayerActionsActionsCallbackInterface.OnRotation;
-                    @Rotation.canceled -= m_Wrapper.m_PLayerActionsActionsCallbackInterface.OnRotation;
+                    @Movement.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnMovement;
+                    @Movement.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnMovement;
+                    @Movement.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnMovement;
+                    @Rotation.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnRotation;
+                    @Rotation.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnRotation;
+                    @Rotation.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnRotation;
+                    @Scroll.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnScroll;
+                    @Scroll.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnScroll;
+                    @Scroll.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnScroll;
                 }
-                m_Wrapper.m_PLayerActionsActionsCallbackInterface = instance;
+                m_Wrapper.m_InGameActionsCallbackInterface = instance;
                 if (instance != null)
                 {
                     @Movement.started += instance.OnMovement;
@@ -217,14 +242,18 @@ namespace Bin.Global.Inputs
                     @Rotation.started += instance.OnRotation;
                     @Rotation.performed += instance.OnRotation;
                     @Rotation.canceled += instance.OnRotation;
+                    @Scroll.started += instance.OnScroll;
+                    @Scroll.performed += instance.OnScroll;
+                    @Scroll.canceled += instance.OnScroll;
                 }
             }
         }
-        public PLayerActionsActions @PLayerActions => new PLayerActionsActions(this);
-        public interface IPLayerActionsActions
+        public InGameActions @InGame => new InGameActions(this);
+        public interface IInGameActions
         {
             void OnMovement(InputAction.CallbackContext context);
             void OnRotation(InputAction.CallbackContext context);
+            void OnScroll(InputAction.CallbackContext context);
         }
     }
 }
