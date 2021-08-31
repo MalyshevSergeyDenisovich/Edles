@@ -56,13 +56,8 @@ namespace Bin.Global.Inputs
 
         private void Scroll()
         {
-            var vec = Mouse.current.scroll.ReadValue();
-            var readValue = new Vector3(0, vec.y,0);
-            
-            // readValue = _scroll.ReadValue<float>();
-            readValue /= 10;
-            
-            transform.position +=  readValue;
+            var y = _scroll.ReadValue<Vector2>().y / 10;
+            transform.position += new Vector3(0, y, 0);
         }
 
         private void Move()

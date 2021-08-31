@@ -137,7 +137,7 @@ namespace Bin.Global.Inputs
                 {
                     ""name"": """",
                     ""id"": ""443201ad-8023-4506-a862-c3be818721ec"",
-                    ""path"": ""<Mouse>/scroll/y"",
+                    ""path"": ""<Mouse>/scroll"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
